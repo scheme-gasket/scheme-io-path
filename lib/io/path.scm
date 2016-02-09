@@ -32,14 +32,6 @@ A current user is used when ~user~ is omitted.
               "/tmp"))
         tmp-dir)))
 
-(define*-public (build-path base-path #:rest components)
-  "~component~ of a pathname is added to ~base-path~."
-  (string-join (map (lambda (path)
-                      (string-trim-both path (string-ref file-name-separator-string 0)))
-                    (cons base-path components))
-               file-name-separator-string
-               'prefix))
-
 (define-public absolute-path? absolute-file-name?)
 
 (define-public (relative-path? path)
@@ -74,12 +66,12 @@ A current user is used when ~user~ is omitted.
        (file-execute-access? path)))
 
 (define*-public (build-path base-path #:rest components)
-  "The ~component~ of a pathname is added to ~base-path~ ."
+  "~component~ of a pathname is added to ~base-path~."
   (string-join (map (lambda (path)
                       (string-trim-both path (string-ref file-name-separator-string 0)))
                     (cons base-path components))
                file-name-separator-string
-               'prefix))
+               'infix))
 
 (define-public (expand-path path)
   "If ~path~ includes the tilde display, what developed it will be returned.
