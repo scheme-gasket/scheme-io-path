@@ -21,10 +21,14 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
+        name: search Guile
+        code: |
+          sudo apt-get search guile
+    - script:
         name: install Guile
         code: |
           sudo apt-get install guile-2.0
     - script:
         name: perform test
         code: |
-          make -C ./test
+          make check
