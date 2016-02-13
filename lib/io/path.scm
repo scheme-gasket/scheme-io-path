@@ -1,4 +1,5 @@
 (define-module (io path)
+  #:use-module (srfi srfi-1)
   #:use-module (ice-9 optargs))
 
 
@@ -23,14 +24,11 @@ A current user is used when ~user~ is omitted.
 ここでは手続きにしています。
 それで、どうやら guile の POSIX には ~tmpdir~ が無いようなので環境変数 TMPDIR と TMP がこの順でチェックされ、
 フォールバックとして /tmp が返されるということにします。"
-  (let ((tmp-dir (getenv "TMPDIR")))
-    (if tmp-dir
-        (begin
-          (set! tmp-dir (getenv "TMP"))
-          (if tmp-dir
-              tmp-dir
-              "/tmp"))
-        tmp-dir)))
+  
+  (let ((tmp-dir (find string? (list (getenv "TMPDIR")
+                                     (getenv "TMP")
+                                     "/tmp"))))
+    tmp-dir))
 
 (define-public absolute-path? absolute-file-name?)
 
@@ -48,13 +46,13 @@ A current user is used when ~user~ is omitted.
       ;; else
       #f))
 
-(define-public (file-is-directory? path)
-  ""
-  (if (file-exists? path)
-      (let ((st (stat path)))
-        (eq? 'directory (stat:type st)))
-      ;; else
-      #f))
+;; (define-public (file-is-directory? path)
+;;   ""
+;;   (if (file-exists? path)
+;;       (let ((st (stat path)))
+;;         (eq? 'directory (stat:type st)))
+;;       ;; else
+;;       #f))
 
 (define-public (file-execute-access? path)
   ""
