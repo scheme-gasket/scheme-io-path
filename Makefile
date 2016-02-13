@@ -1,0 +1,4 @@
+
+
+check:
+	make -C ./test
