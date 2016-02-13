@@ -24,6 +24,10 @@ build:
         name: update apt
         code: |
           sudo apt-get update
+    - script: 
+        name: install Make
+        code: |
+          sudo apt-get install -y make
     - script:
         name: install Guile
         code: |
