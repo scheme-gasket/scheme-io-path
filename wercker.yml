@@ -23,7 +23,7 @@ build:
     - script:
         name: search Guile
         code: |
-          sudo apt-get search guile
+          sudo apt-cache search guile
     - script:
         name: install Guile
         code: |
