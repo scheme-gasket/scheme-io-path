@@ -1,5 +1,6 @@
 (define-module (io path)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-13)
   #:use-module (ice-9 optargs))
 
 
@@ -103,3 +104,51 @@ When the pathname has finished with the directory separator, it is the 2nd and 3
         (string-copy path (+ found-index 1))
         ;; else
         #f)))
+
+(define (gen-append-pathname pathname)
+  (lambda (entry)
+    (if (string-suffix?  "/" pathname)
+        (string-append pathname entry)
+        ;; else
+        (string-append pathname "/" entry))))
+
+(define* (in-dir pathname #:optional (proc #f) (filter (lambda (e) #t)) (filter-add-path? #f))
+  (define append-pathname (gen-append-pathname pathname))
+  (when filter-add-path?
+        (let ((old-filter filter))
+          (set! filter (lambda (entry)
+                         (old-filter (append-pathname entry))))))
+  (let ((dir      (opendir pathname)))
+    (let recur ((entry (readdir dir)))
+      (cond ((eof-object? entry)    #f)
+            (else                   (when proc
+                                          (when (filter entry)
+                                                (proc entry)))
+                                    (recur (readdir dir)))))
+    (closedir dir)))
+
+(define (current-or-parent? path)
+  (or (string=? path ".")
+      (string=? path "..")))
+
+(define*-public (directory-list pathname #:key (children? #f) (add-path? #f) (filter (lambda (e) #t)) (filter-add-path? #f))
+  ""
+  (define append-pathname (gen-append-pathname pathname))
+  (let ((entries '()))
+    (define in-dir-proc (cond ((and children?
+                                    add-path?)         (lambda (entry)
+                                                         (if (current-or-parent? entry)
+                                                             #f
+                                                             ;; else
+                                                             (set! entries (cons (append-pathname entry) entries)))))
+                              (children?               (lambda (entry)
+                                                         (if (current-or-parent? entry)
+                                                             #f
+                                                             ;; else
+                                                             (set! entries (cons entry entries)))))
+                              (add-path?               (lambda (entry)
+                                                         (set! entries (cons (append-pathname entry) entries))))
+                              (else                    (lambda (entry)
+                                                         (set! entries (cons entry entries))))))
+    (in-dir pathname in-dir-proc filter filter-add-path?)
+    (sort entries string<?)))
