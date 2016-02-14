@@ -1,6 +1,7 @@
 (define-module (io path)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-13)
+  #:use-module (srfi srfi-39)
   #:use-module (ice-9 optargs))
 
 
@@ -20,16 +21,11 @@ A current user is used when ~user~ is omitted.
         ;; else
         (passwd:dir (getpwuid (getuid))))))
 
-(define-public (temporary-directory)
-  "一時ファイルを作るのに適したディレクトリ名を保持しているパラメータらしいのですが、
-ここでは手続きにしています。
-それで、どうやら guile の POSIX には ~tmpdir~ が無いようなので環境変数 TMPDIR と TMP がこの順でチェックされ、
-フォールバックとして /tmp が返されるということにします。"
-  
-  (let ((tmp-dir (find string? (list (getenv "TMPDIR")
-                                     (getenv "TMP")
-                                     "/tmp"))))
-    tmp-dir))
+(define-public temporary-directory
+  (make-parameter (let ((tmp-dir (find string? (list (getenv "TMPDIR")
+                                                     (getenv "TMP")
+                                                     "/tmp"))))
+                    tmp-dir)))
 
 (define-public absolute-path? absolute-file-name?)
 
