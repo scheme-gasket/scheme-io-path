@@ -1,0 +1,13 @@
+;; -*- mode: scheme; -*-
+((name            .  "io-path")
+ (version         .  "0.1")
+ (implementations . ("guile" "2.0.11"))
+ (description     . "procudere treating a file or directory path")
+ (source-url      . "https://github.com/scheme-gasket/scm-io-path.git")
+ (authors         . (
+                     ("Ned Rihine <ned.rihine@gmail.com>")))
+ (support         . (
+                     (bugtracker    . "https://github.com/scheme-gasket/scm-io-path/issues")
+                     (source        . "https://github.com/scheme-gasket/scm-io-path")))
+ (provides        . (
+                     (io path)        "lib/io/path.scm")))
