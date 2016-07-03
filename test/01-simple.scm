@@ -1,3 +1,5 @@
+(add-to-load-path "../lib")
+
 (use-modules (io path)
              (srfi srfi-13)
              (srfi srfi-64))

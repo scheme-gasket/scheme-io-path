@@ -57,8 +57,9 @@ A current user is used when ~user~ is omitted.
 
 (define-public (execution-file? path)
   "~#t~ will be returned if the path of a file can be performed."
-  (and (file-is-regular? path)
-       (file-execute-access? path)))
+  (let ((expanded-path (expand-path path)))
+    (and (file-is-regular? expanded-path)
+         (file-execute-access? expanded-path))))
 
 (define*-public (build-path base-path #:rest components)
   "~component~ of a pathname is added to ~base-path~."
